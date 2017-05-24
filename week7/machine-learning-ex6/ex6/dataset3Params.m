@@ -24,7 +24,23 @@ sigma = 0.3;
 %
 
 
+steps = [0.01; 0.03; 0.1; 0.3];
+error = -1;
 
+for i = 1:size(steps,1)
+    _C = steps(i);
+    for k = 1:size(steps,1) 
+        _sigma = steps(k);
+        model = svmTrain(X, y, _C, @(x1, x2) gaussianKernel(x1, x2, _sigma));
+        predictions = svmPredict(model, Xval);
+        _error = mean(double(predictions ~= yval));
+        if (_error < error) || (error == -1)
+            error = _error;
+            C = _C;
+            sigma = _sigma;
+        end
+    end
+end
 
 
 
